@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plus, Share2 } from 'lucide-react';
-import { supabase, PNLEntry } from '../lib/supabase';
+import { localStorageDB, PNLEntry } from '../lib/supabase';
 import { PNLModal } from './PNLModal';
 import { ShareCard } from './ShareCard';
 
@@ -30,19 +30,17 @@ export function PNLCalendar() {
     const startDate = new Date(prevMonthYear, prevMonth, 1);
     const endDate = new Date(nextMonthYear, nextMonth + 1, 0);
 
-    const { data, error } = await supabase
-      .from('pnl_entries')
-      .select('*')
-      .gte('date', startDate.toISOString().split('T')[0])
-      .lte('date', endDate.toISOString().split('T')[0]);
+    // Use localStorage
+    const data = localStorageDB.getEntriesInRange(
+      startDate.toISOString().split('T')[0],
+      endDate.toISOString().split('T')[0]
+    );
 
-    if (!error && data) {
-      const entriesMap: Record<string, PNLEntry> = {};
-      data.forEach((entry) => {
-        entriesMap[entry.date] = entry;
-      });
-      setEntries(entriesMap);
-    }
+    const entriesMap: Record<string, PNLEntry> = {};
+    data.forEach((entry) => {
+      entriesMap[entry.date] = entry;
+    });
+    setEntries(entriesMap);
     setLoading(false);
   };
 
@@ -109,7 +107,14 @@ export function PNLCalendar() {
   };
 
   const getMonthlyTotal = () => {
-    return Object.values(entries).reduce((sum, entry) => sum + Number(entry.pnl_amount), 0);
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    return Object.values(entries)
+      .filter(entry => {
+        const entryDate = new Date(entry.date);
+        return entryDate.getMonth() === month && entryDate.getFullYear() === year;
+      })
+      .reduce((sum, entry) => sum + Number(entry.pnl_amount), 0);
   };
 
   const getCurrentMonthEntries = () => {

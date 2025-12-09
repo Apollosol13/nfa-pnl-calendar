@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, Trash2 } from 'lucide-react';
-import { supabase, PNLEntry } from '../lib/supabase';
+import { localStorageDB, PNLEntry } from '../lib/supabase';
 
 interface PNLModalProps {
   date: string;
@@ -29,41 +29,15 @@ export function PNLModal({ date, entry, onClose }: PNLModalProps) {
 
     setLoading(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      alert('You must be logged in to save entries');
-      setLoading(false);
-      return;
-    }
-
-    const entryData = {
-      user_id: user.id,
-      date,
-      pnl_amount: parseFloat(pnlAmount),
-      num_trades: parseInt(numTrades) || 0,
-      notes: notes || null,
-      updated_at: new Date().toISOString(),
-    };
-
-    if (entry) {
-      // Update existing entry
-      const { error } = await supabase
-        .from('pnl_entries')
-        .update(entryData)
-        .eq('id', entry.id);
-
-      if (error) {
-        alert('Error updating entry: ' + error.message);
-      }
-    } else {
-      // Insert new entry
-      const { error } = await supabase
-        .from('pnl_entries')
-        .insert([entryData]);
-
-      if (error) {
-        alert('Error creating entry: ' + error.message);
-      }
+    try {
+      localStorageDB.saveEntry({
+        date,
+        pnl_amount: parseFloat(pnlAmount),
+        num_trades: parseInt(numTrades) || 0,
+        notes: notes || undefined,
+      });
+    } catch (error) {
+      alert('Error saving entry');
     }
 
     setLoading(false);
@@ -75,13 +49,11 @@ export function PNLModal({ date, entry, onClose }: PNLModalProps) {
     if (!confirm('Are you sure you want to delete this entry?')) return;
 
     setLoading(true);
-    const { error } = await supabase
-      .from('pnl_entries')
-      .delete()
-      .eq('id', entry.id);
-
-    if (error) {
-      alert('Error deleting entry: ' + error.message);
+    
+    try {
+      localStorageDB.deleteEntry(date);
+    } catch (error) {
+      alert('Error deleting entry');
     }
 
     setLoading(false);
