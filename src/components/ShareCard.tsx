@@ -2,25 +2,22 @@ import { X, Download, Share2, TrendingUp, Check } from 'lucide-react';
 import { PNLEntry } from '../lib/supabase';
 import { useRef, useState } from 'react';
 
-// Component to handle logo with fallback
-function TickerLogo({ ticker, logoUrl, size = 'w-8 h-8' }: { ticker: string; logoUrl: string | null; size?: string }) {
-  const [imageError, setImageError] = useState(false);
-
-  if (!logoUrl || imageError) {
+// Component to display ticker with emoji icon
+function TickerLogo({ ticker, size = 'w-8 h-8' }: { ticker: string; size?: string }) {
+  const emoji = TICKER_TO_EMOJI[ticker];
+  
+  if (emoji) {
     return (
-      <div className={`${size} bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0`}>
-        <span className="text-white font-bold text-sm">{ticker[0]}</span>
+      <div className={`${size} flex items-center justify-center flex-shrink-0 text-2xl`}>
+        {emoji}
       </div>
     );
   }
 
   return (
-    <img
-      src={logoUrl}
-      alt={ticker}
-      className={`${size} rounded-lg flex-shrink-0`}
-      onError={() => setImageError(true)}
-    />
+    <div className={`${size} bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0`}>
+      <span className="text-white font-bold text-sm">{ticker[0]}</span>
+    </div>
   );
 }
 
@@ -32,36 +29,36 @@ interface ShareCardProps {
   onClose: () => void;
 }
 
-// Stock ticker to company domain mapping
-const TICKER_TO_DOMAIN: Record<string, string> = {
-  'AAPL': 'apple.com',
-  'TSLA': 'tesla.com',
-  'MSFT': 'microsoft.com',
-  'GOOGL': 'google.com',
-  'AMZN': 'amazon.com',
-  'META': 'meta.com',
-  'NVDA': 'nvidia.com',
-  'AMD': 'amd.com',
-  'NFLX': 'netflix.com',
-  'DIS': 'disney.com',
-  'BA': 'boeing.com',
-  'GE': 'ge.com',
-  'JPM': 'jpmorganchase.com',
-  'V': 'visa.com',
-  'MA': 'mastercard.com',
-  'PYPL': 'paypal.com',
-  'SQ': 'squareup.com',
-  'COIN': 'coinbase.com',
-  'GLD': 'gold.org',
-  'SPY': 'spdr.com',
-  'QQQ': 'invesco.com',
-  'PLTR': 'palantir.com',
-  'SOFI': 'sofi.com',
-  'ROKU': 'roku.com',
-  'SNAP': 'snap.com',
-  'UBER': 'uber.com',
-  'LYFT': 'lyft.com',
-  'BABA': 'alibaba.com',
+// Stock ticker to emoji mapping
+const TICKER_TO_EMOJI: Record<string, string> = {
+  'AAPL': '🍎',
+  'TSLA': '⚡',
+  'MSFT': '💻',
+  'GOOGL': '🔍',
+  'AMZN': '📦',
+  'META': '👥',
+  'NVDA': '🎮',
+  'AMD': '🔧',
+  'NFLX': '🎬',
+  'DIS': '🏰',
+  'BA': '✈️',
+  'GE': '⚙️',
+  'JPM': '🏦',
+  'V': '💳',
+  'MA': '💳',
+  'PYPL': '💰',
+  'SQ': '💳',
+  'COIN': '₿',
+  'GLD': '🪙',
+  'SPY': '📈',
+  'QQQ': '📊',
+  'PLTR': '🛡️',
+  'SOFI': '💵',
+  'ROKU': '📺',
+  'SNAP': '👻',
+  'UBER': '🚗',
+  'LYFT': '🚙',
+  'BABA': '🛒',
 };
 
 export function ShareCard({ month, year, entries, monthlyTotal, onClose }: ShareCardProps) {
@@ -128,13 +125,6 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
     }
   };
 
-  const getLogoUrl = (ticker: string) => {
-    const domain = TICKER_TO_DOMAIN[ticker];
-    if (domain) {
-      return `https://logo.clearbit.com/${domain}`;
-    }
-    return null;
-  };
 
   const handleDownload = async () => {
     if (!cardRef.current) return;
@@ -207,25 +197,22 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
             
             {/* Popular Tickers */}
             <div className="grid grid-cols-3 gap-2 mb-4">
-              {popularTickers.map(ticker => {
-                const logoUrl = getLogoUrl(ticker);
-                return (
-                  <button
-                    key={ticker}
-                    onClick={() => toggleWinner(ticker)}
-                    disabled={selectedWinners.length >= 3 && !selectedWinners.includes(ticker)}
-                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
-                      selectedWinners.includes(ticker)
-                        ? 'bg-green-600 text-white'
-                        : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    {selectedWinners.includes(ticker) && <Check className="w-4 h-4" />}
-                    <TickerLogo ticker={ticker} logoUrl={logoUrl} size="w-5 h-5" />
-                    {ticker}
-                  </button>
-                );
-              })}
+              {popularTickers.map(ticker => (
+                <button
+                  key={ticker}
+                  onClick={() => toggleWinner(ticker)}
+                  disabled={selectedWinners.length >= 3 && !selectedWinners.includes(ticker)}
+                  className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    selectedWinners.includes(ticker)
+                      ? 'bg-green-600 text-white'
+                      : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {selectedWinners.includes(ticker) && <Check className="w-4 h-4" />}
+                  <TickerLogo ticker={ticker} size="w-5 h-5" />
+                  {ticker}
+                </button>
+              ))}
             </div>
 
             {/* Custom Ticker Input */}
@@ -337,18 +324,15 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
                   <p className="text-zinc-400 text-sm font-semibold uppercase tracking-wide">Top Winners</p>
                 </div>
                 <div className="flex flex-wrap gap-4">
-                  {selectedWinners.map((ticker) => {
-                    const logoUrl = getLogoUrl(ticker);
-                    return (
-                      <div
-                        key={ticker}
-                        className="flex items-center gap-3 px-4 py-3 bg-green-500/10 border border-green-500/30 rounded-xl"
-                      >
-                        <TickerLogo ticker={ticker} logoUrl={logoUrl} />
-                        <span className="text-green-400 font-bold text-lg">{ticker}</span>
-                      </div>
-                    );
-                  })}
+                  {selectedWinners.map((ticker) => (
+                    <div
+                      key={ticker}
+                      className="flex items-center gap-3 px-4 py-3 bg-green-500/10 border border-green-500/30 rounded-xl"
+                    >
+                      <TickerLogo ticker={ticker} />
+                      <span className="text-green-400 font-bold text-lg">{ticker}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </>
