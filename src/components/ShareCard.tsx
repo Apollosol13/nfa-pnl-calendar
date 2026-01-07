@@ -185,21 +185,34 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
             
             {/* Popular Tickers */}
             <div className="grid grid-cols-3 gap-2 mb-4">
-              {popularTickers.map(ticker => (
-                <button
-                  key={ticker}
-                  onClick={() => toggleWinner(ticker)}
-                  disabled={selectedWinners.length >= 3 && !selectedWinners.includes(ticker)}
-                  className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                    selectedWinners.includes(ticker)
-                      ? 'bg-green-600 text-white'
-                      : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                  } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  {selectedWinners.includes(ticker) && <Check className="w-4 h-4 inline mr-1" />}
-                  {ticker}
-                </button>
-              ))}
+              {popularTickers.map(ticker => {
+                const logoUrl = getLogoUrl(ticker);
+                return (
+                  <button
+                    key={ticker}
+                    onClick={() => toggleWinner(ticker)}
+                    disabled={selectedWinners.length >= 3 && !selectedWinners.includes(ticker)}
+                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      selectedWinners.includes(ticker)
+                        ? 'bg-green-600 text-white'
+                        : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {selectedWinners.includes(ticker) && <Check className="w-4 h-4" />}
+                    {logoUrl && (
+                      <img
+                        src={logoUrl}
+                        alt={ticker}
+                        className="w-5 h-5 rounded"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    )}
+                    {ticker}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Custom Ticker Input */}
