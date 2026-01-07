@@ -2,6 +2,28 @@ import { X, Download, Share2, TrendingUp, Check } from 'lucide-react';
 import { PNLEntry } from '../lib/supabase';
 import { useRef, useState } from 'react';
 
+// Component to handle logo with fallback
+function TickerLogo({ ticker, logoUrl, size = 'w-8 h-8' }: { ticker: string; logoUrl: string | null; size?: string }) {
+  const [imageError, setImageError] = useState(false);
+
+  if (!logoUrl || imageError) {
+    return (
+      <div className={`${size} bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0`}>
+        <span className="text-white font-bold text-sm">{ticker[0]}</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={logoUrl}
+      alt={ticker}
+      className={`${size} rounded-lg flex-shrink-0`}
+      onError={() => setImageError(true)}
+    />
+  );
+}
+
 interface ShareCardProps {
   month: string;
   year: number;
@@ -199,16 +221,7 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {selectedWinners.includes(ticker) && <Check className="w-4 h-4" />}
-                    {logoUrl && (
-                      <img
-                        src={logoUrl}
-                        alt={ticker}
-                        className="w-5 h-5 rounded"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    )}
+                    <TickerLogo ticker={ticker} logoUrl={logoUrl} size="w-5 h-5" />
                     {ticker}
                   </button>
                 );
@@ -331,20 +344,7 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
                         key={ticker}
                         className="flex items-center gap-3 px-4 py-3 bg-green-500/10 border border-green-500/30 rounded-xl"
                       >
-                        {logoUrl ? (
-                          <img
-                            src={logoUrl}
-                            alt={ticker}
-                            className="w-8 h-8 rounded-lg"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">{ticker[0]}</span>
-                          </div>
-                        )}
+                        <TickerLogo ticker={ticker} logoUrl={logoUrl} />
                         <span className="text-green-400 font-bold text-lg">{ticker}</span>
                       </div>
                     );
