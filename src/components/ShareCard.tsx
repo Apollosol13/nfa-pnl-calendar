@@ -125,7 +125,6 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
     }
   };
 
-
   const handleDownload = async () => {
     if (!cardRef.current) return;
 
@@ -179,19 +178,19 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
   const popularTickers = ['AAPL', 'TSLA', 'NVDA', 'MSFT', 'GOOGL', 'META', 'AMZN', 'SPY', 'GLD'];
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="relative max-w-2xl w-full my-8">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start md:items-center justify-center z-50 overflow-y-auto">
+      <div className="relative max-w-2xl w-full md:my-8 py-16 md:py-0 px-4">
         <button
           onClick={onClose}
-          className="absolute -top-12 right-0 p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+          className="fixed md:absolute top-4 md:-top-12 right-4 md:right-0 p-2 text-white hover:bg-white/10 rounded-lg transition-colors z-50"
         >
           <X className="w-6 h-6" />
         </button>
 
         {/* Winner Selector Modal */}
         {isSelectingWinners && (
-          <div className="mb-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-            <h3 className="text-white text-lg font-semibold mb-4">
+          <div className="mb-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-4 md:p-6 max-h-[70vh] overflow-y-auto">
+            <h3 className="text-white text-base md:text-lg font-semibold mb-4">
               Select Top Winners (Max 3)
             </h3>
             
@@ -202,15 +201,15 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
                   key={ticker}
                   onClick={() => toggleWinner(ticker)}
                   disabled={selectedWinners.length >= 3 && !selectedWinners.includes(ticker)}
-                  className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  className={`flex items-center justify-center gap-1 md:gap-2 px-2 md:px-4 py-2 rounded-lg text-sm md:text-base font-semibold transition-colors ${
                     selectedWinners.includes(ticker)
                       ? 'bg-green-600 text-white'
                       : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  {selectedWinners.includes(ticker) && <Check className="w-4 h-4" />}
-                  <TickerLogo ticker={ticker} size="w-5 h-5" />
-                  {ticker}
+                  {selectedWinners.includes(ticker) && <Check className="w-3 h-3 md:w-4 md:h-4" />}
+                  <TickerLogo ticker={ticker} size="w-4 h-4 md:w-5 md:h-5" />
+                  <span className="text-xs md:text-base">{ticker}</span>
                 </button>
               ))}
             </div>
@@ -223,12 +222,12 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
                 onChange={(e) => setCustomTicker(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addCustomTicker()}
                 placeholder="Add custom ticker"
-                className="flex-1 px-4 py-2 bg-black border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 md:px-4 py-2 text-sm md:text-base bg-black border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
                 onClick={addCustomTicker}
                 disabled={selectedWinners.length >= 3}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-3 md:px-4 py-2 text-sm md:text-base bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
               >
                 Add
               </button>
@@ -237,16 +236,16 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
             {/* Selected Winners */}
             {selectedWinners.length > 0 && (
               <div className="mb-4">
-                <p className="text-zinc-400 text-sm mb-2">Selected:</p>
+                <p className="text-zinc-400 text-xs md:text-sm mb-2">Selected:</p>
                 <div className="flex flex-wrap gap-2">
                   {selectedWinners.map(ticker => (
                     <div key={ticker} className="flex items-center gap-2 px-3 py-1 bg-green-600 rounded-lg">
-                      <span className="text-white font-semibold">{ticker}</span>
+                      <span className="text-white text-sm md:text-base font-semibold">{ticker}</span>
                       <button
                         onClick={() => toggleWinner(ticker)}
                         className="text-white hover:text-red-300"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3 h-3 md:w-4 md:h-4" />
                       </button>
                     </div>
                   ))}
@@ -256,7 +255,7 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
 
             <button
               onClick={() => setIsSelectingWinners(false)}
-              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+              className="w-full px-4 py-2 text-sm md:text-base bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
             >
               Done
             </button>
@@ -266,51 +265,51 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
         {/* Share Card */}
         <div
           ref={cardRef}
-          className="bg-black border border-zinc-800 rounded-3xl p-8 shadow-2xl"
+          className="bg-black border border-zinc-800 rounded-3xl p-6 md:p-8 shadow-2xl"
         >
           {/* Logo and Title */}
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4 mb-6 md:mb-8">
             <img
               src="/nfa_logo_transparent_medium.png"
               alt="NFA Logo"
-              className="h-16"
+              className="h-12 md:h-16"
             />
             <div>
-              <h2 className="text-2xl font-bold text-white">NFA Trading</h2>
-              <p className="text-zinc-400 text-sm">Monthly Report</p>
+              <h2 className="text-xl md:text-2xl font-bold text-white">NFA Trading</h2>
+              <p className="text-zinc-400 text-xs md:text-sm">Monthly Report</p>
             </div>
           </div>
 
           {/* Month and Year */}
           <div className="mb-4">
-            <p className="text-zinc-400 text-sm uppercase tracking-wide">{month} {year}</p>
+            <p className="text-zinc-400 text-xs md:text-sm uppercase tracking-wide">{month} {year}</p>
           </div>
 
           {/* Main P/L */}
-          <div className="mb-8">
-            <div className={`text-5xl font-bold mb-2 ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+          <div className="mb-6 md:mb-8">
+            <div className={`text-4xl md:text-5xl font-bold mb-2 ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
               {isPositive ? '+' : ''}{formatCurrency(monthlyTotal)}
             </div>
-            <p className="text-zinc-400 text-sm">Total P/L</p>
+            <p className="text-zinc-400 text-xs md:text-sm">Total P/L</p>
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-2 gap-4 md:gap-6 mb-6">
             <div>
-              <p className="text-zinc-500 text-sm mb-1">TRADING DAYS</p>
-              <p className="text-white text-2xl font-semibold">{stats.tradingDays}</p>
+              <p className="text-zinc-500 text-xs md:text-sm mb-1">TRADING DAYS</p>
+              <p className="text-white text-xl md:text-2xl font-semibold">{stats.tradingDays}</p>
             </div>
             <div>
-              <p className="text-zinc-500 text-sm mb-1">TOTAL TRADES</p>
-              <p className="text-white text-2xl font-semibold">{stats.totalTrades}</p>
+              <p className="text-zinc-500 text-xs md:text-sm mb-1">TOTAL TRADES</p>
+              <p className="text-white text-xl md:text-2xl font-semibold">{stats.totalTrades}</p>
             </div>
             <div>
-              <p className="text-zinc-500 text-sm mb-1">WIN RATE</p>
-              <p className="text-white text-2xl font-semibold">{stats.winRate.toFixed(1)}%</p>
+              <p className="text-zinc-500 text-xs md:text-sm mb-1">WIN RATE</p>
+              <p className="text-white text-xl md:text-2xl font-semibold">{stats.winRate.toFixed(1)}%</p>
             </div>
             <div>
-              <p className="text-zinc-500 text-sm mb-1">BEST DAY</p>
-              <p className="text-green-400 text-2xl font-semibold">{formatCurrency(stats.bestDay)}</p>
+              <p className="text-zinc-500 text-xs md:text-sm mb-1">BEST DAY</p>
+              <p className="text-green-400 text-xl md:text-2xl font-semibold">{formatCurrency(stats.bestDay)}</p>
             </div>
           </div>
 
@@ -320,17 +319,17 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
               <div className="border-t border-zinc-800 my-6"></div>
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp className="w-5 h-5 text-green-400" />
-                  <p className="text-zinc-400 text-sm font-semibold uppercase tracking-wide">Top Winners</p>
+                  <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
+                  <p className="text-zinc-400 text-xs md:text-sm font-semibold uppercase tracking-wide">Top Winners</p>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-3 md:gap-4">
                   {selectedWinners.map((ticker) => (
                     <div
                       key={ticker}
-                      className="flex items-center gap-3 px-4 py-3 bg-green-500/10 border border-green-500/30 rounded-xl"
+                      className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 bg-green-500/10 border border-green-500/30 rounded-xl"
                     >
-                      <TickerLogo ticker={ticker} />
-                      <span className="text-green-400 font-bold text-lg">{ticker}</span>
+                      <TickerLogo ticker={ticker} size="w-6 h-6 md:w-8 md:h-8" />
+                      <span className="text-green-400 font-bold text-base md:text-lg">{ticker}</span>
                     </div>
                   ))}
                 </div>
@@ -343,31 +342,31 @@ export function ShareCard({ month, year, entries, monthlyTotal, onClose }: Share
 
           {/* Footer */}
           <div className="text-center">
-            <p className="text-zinc-500 text-sm">Track your trading performance</p>
+            <p className="text-zinc-500 text-xs md:text-sm">Track your trading performance</p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 mt-4 justify-center">
+        <div className="flex flex-col md:flex-row gap-2 md:gap-3 mt-4 pb-safe">
           <button
             onClick={() => setIsSelectingWinners(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-zinc-700 hover:bg-zinc-600 text-white rounded-xl font-semibold transition-colors"
+            className="flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-zinc-700 hover:bg-zinc-600 text-white rounded-xl text-sm md:text-base font-semibold transition-colors"
           >
-            <TrendingUp className="w-5 h-5" />
-            {selectedWinners.length > 0 ? 'Edit Winners' : 'Add Winners'}
+            <TrendingUp className="w-4 h-4 md:w-5 md:h-5" />
+            <span>{selectedWinners.length > 0 ? 'Edit' : 'Add'} Winners</span>
           </button>
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors"
+            className="flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm md:text-base font-semibold transition-colors"
           >
-            <Download className="w-5 h-5" />
+            <Download className="w-4 h-4 md:w-5 md:h-5" />
             Download
           </button>
           <button
             onClick={handleShare}
-            className="flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-colors"
+            className="flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm md:text-base font-semibold transition-colors"
           >
-            <Share2 className="w-5 h-5" />
+            <Share2 className="w-4 h-4 md:w-5 md:h-5" />
             Share
           </button>
         </div>
